@@ -1,26 +1,25 @@
-import {  useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import {
   GptMessage,
   MyMessage,
   TextMessageBox,
-
-  // TextMessageBox,
-  // TextMessageBoxFile,
   TypingLoader
 } from '../../components'
-import { orthographyUseCase } from '../../../core'
+
+import { ERPDataViewUseCase } from '../../../core/use-cases/ERPDataView.use-case'
 
 
-// interface Option {
-//   id: string
-//   text: string
-// }
+
 
 interface Message {
   value: string
   id: string
   isGpt: boolean
+  query?: string
+  queryResults?: unknown
+  originaPrompt?: string
+  error?: string
   info?: {
     userScore: number
     errors: string[]
@@ -28,17 +27,21 @@ interface Message {
   }
 }
 
-// const options: Option[] = [
-//   { id: crypto.randomUUID(), text: 'hola mundo' },
-//   { id: crypto.randomUUID(), text: 'Perros' }
-// ]
-
-
-
-export const OrthographyPage = () => {
+export const ERPDataView = () => {
 
   const [loading, setLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
+  const bottomRef = useRef<HTMLDivElement | null>(null); // 
+
+
+
+  useEffect(() => {
+    // Desplazarse al último mensaje cuando cambia la lista de mensajes
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
 
 
 
@@ -46,35 +49,44 @@ export const OrthographyPage = () => {
 
     const id = uuidv4();
 
-
     setLoading(true)
-    setMessages([...messages, { value: message, id: id, isGpt: false }])
+    setMessages([...messages, { value: message, id, isGpt: false }])
 
     try {
 
-      const data = await orthographyUseCase(message)
+      const data = await ERPDataViewUseCase(message)
+
+
 
       if (!data.ok) {
         setMessages(prev =>
           [...prev,
           {
             value: 'Hubo un error al procesar tu respuesta',
-            id: '1',
+            id,
             isGpt: true
           }]
         )
         return
       }
-      const { message: value, errors, userScore } = data
 
-      const gptResponse = `
-      tuviste los siguientes errores:  ${errors.length > 0 ? errors.join(', ') : 'Sin errores'}
-      tu puntuacion: ${userScore}
-      ${value}
-     
-     `
 
-      setMessages(prev => [...prev, { value: gptResponse, id, isGpt: true }])
+
+
+      setMessages(
+        prev => 
+          [
+            ...prev, 
+            { 
+              value: data.query, 
+              id, 
+              isGpt: true, 
+              query: data.query, 
+              queryResults: data.queryResults, 
+              error: data.error 
+            }
+          ]
+        )
 
 
 
@@ -107,12 +119,18 @@ export const OrthographyPage = () => {
 
           {
             (messages && messages.length) > 0 &&
-            messages.map(({ value, id, isGpt }) => (
+            messages.map(({ value, id, isGpt, query, queryResults, error, originaPrompt }) => (
               isGpt
                 ? (
                   <GptMessage
                     key={id}
-                    text={value} />
+                    sql={query}
+                    originalPropmt={originaPrompt}
+                    sqlResults={queryResults}
+                    error={error}
+                    text={value}
+
+                  />
                 ) : (
                   <MyMessage
                     key={id}
@@ -122,12 +140,14 @@ export const OrthographyPage = () => {
             ))
           }
 
+
+
           {
             loading &&
             <TypingLoader className='fade-in ' />
           }
 
-
+          <div ref={bottomRef} />
 
         </div>
 
