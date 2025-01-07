@@ -1,4 +1,4 @@
-import {  useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import {
   GptMessage,
@@ -10,6 +10,7 @@ import {
   TypingLoader
 } from '../../components'
 import { orthographyUseCase } from '../../../core'
+import { GptOrtographyMessage } from '../../components/chat-bubbles/GptOrtographyMessage';
 
 
 // interface Option {
@@ -45,6 +46,8 @@ export const OrthographyPage = () => {
   const handleOnsendMessage = async (message: string) => {
 
     const id = uuidv4();
+
+
 
 
     setLoading(true)
@@ -94,7 +97,6 @@ export const OrthographyPage = () => {
 
   }
 
-
   return (
     <div className=' chat-container'>
       <div className='chat-messages'>
@@ -107,17 +109,14 @@ export const OrthographyPage = () => {
 
           {
             (messages && messages.length) > 0 &&
-            messages.map(({ value, id, isGpt }) => (
+            messages.map(({ value, id, isGpt, info }) => (
               isGpt
                 ? (
-                  <GptMessage
-                    key={id}
-                    text={value} />
-                ) : (
-                  <MyMessage
-                    key={id}
-                    text={value}
+                  <GptOrtographyMessage
+                    key={id} userScore={info?.userScore} errors={info?.errors} message={info?.message}
                   />
+                ) : (
+                  <MyMessage text={value} />
                 )
             ))
           }

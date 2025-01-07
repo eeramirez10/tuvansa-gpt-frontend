@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { GptMessage, MyMessage, TextMessageBox, TypingLoader } from '../components'
-
-
 
 interface Message {
   value: string
@@ -21,10 +19,6 @@ export const ChatTemplate = () => {
     setLoading(true)
     setMessages([...messages, { value: message, id: crypto.randomUUID(), isGpt: false }])
     setLoading(false)
-
-
-
-
 
   }
 

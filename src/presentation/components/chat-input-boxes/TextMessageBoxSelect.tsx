@@ -17,16 +17,18 @@ interface Option {
 export const TextMessageBoxSelect = ({ onSendMessage, placeholder, disableCorrections = false, options }: Props) => {
 
   const [message, setMessage] = useState('')
-  const [selectedOption, setSelectedOption] = useState('')
+  const [selectedOption, setSelectedOption] = useState(options[1].text)
 
 
   const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (message.trim().length === 0) return;
+    if (selectedOption.trim().length === 0) return;
 
     onSendMessage(message, selectedOption);
     setMessage('');
+
   }
 
   return (
@@ -54,9 +56,12 @@ export const TextMessageBoxSelect = ({ onSendMessage, placeholder, disableCorrec
           <select
             name="select"
             className='w-2/5 ml-5 border rounded-xl text-gray-800 focus:outline-none focus:border-indigo-300 pl-4 h-10'
-            onChange={(e) => setSelectedOption(e.target.value)}
+            onChange={(e) => {
+              console.log(e.target.value)
+              setSelectedOption(e.target.value)
+            }}
             value={selectedOption}
-          
+
           >
             {
               options.map(op => (

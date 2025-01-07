@@ -1,9 +1,9 @@
 
 export interface ERPDataViewResponse {
   query: string
-  originaPrompt: string,
+  originaPrompt?: string,
   error?: string
   queryResults?: Record<string,string>[]
-  responseToHuman: string
+  responseToHuman?: string
 
 }

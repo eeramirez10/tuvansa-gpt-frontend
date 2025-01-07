@@ -10,7 +10,6 @@ interface Props {
   sqlResults?: Record<string, string>[]
 }
 export const GptMessage: React.FC<Props> = ({ text, sql, originalPropmt, sqlResults, error }) => {
-  console.log(error)
   return (
     <div className='col-start-1 col-end-8 p-3 rounded-lg'>
       <div className='flex flex-row items-start'>

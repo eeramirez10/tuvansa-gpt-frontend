@@ -31,7 +31,7 @@ interface Message {
 export const ERPDataViewUser = () => {
 
   const [loading, setLoading] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>(localStorage.getItem('chat_user') !== null ? JSON.parse(localStorage.getItem('chat_user')) : [])
   const bottomRef = useRef<HTMLDivElement | null>(null); // 
 
 
@@ -41,6 +41,8 @@ export const ERPDataViewUser = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+
+    localStorage.setItem('chat_user', JSON.stringify(messages))
   }, [messages]);
 
 
@@ -48,44 +50,37 @@ export const ERPDataViewUser = () => {
 
   const handleOnsendMessage = async (message: string) => {
 
-    const id = uuidv4();
 
     setLoading(true)
-    setMessages([...messages, { value: message, id, isGpt: false }])
+
+    const newChatUser = {
+      value: message,
+      id: uuidv4(),
+      isGpt: false
+    }
+    setMessages([...messages, newChatUser])
+
+
+
+
 
     try {
 
       const data = await ERPDataViewUseCase(message)
 
-
-      if (!data.ok) {
-        setMessages(prev =>
-          [...prev,
-          {
-            value: 'Hubo un error al procesar tu respuesta',
-            id,
-            error: data.error,
-            isGpt: true
-          }]
-        )
-        return
+      const newChat = {
+        value: data?.responseToHuman ?? '',
+        responseToHuman: data.responseToHuman,
+        error: data.error,
+        isGpt: true,
+        id: uuidv4()
       }
 
 
 
 
-      setMessages(
-        prev =>
-          [
-            ...prev,
-            {
-              value: data.responseToHuman,
-              responseToHuman: data.responseToHuman,
-              error: data.error,
-              isGpt: true
-            }
-          ]
-      )
+      setMessages(prev => [...prev, newChat])
+
 
 
 
@@ -105,7 +100,7 @@ export const ERPDataViewUser = () => {
 
   }
 
-  console.log(messages)
+
 
 
   return (
@@ -125,7 +120,7 @@ export const ERPDataViewUser = () => {
                 ? (
                   <GptMessage
                     key={id}
-                    error={ error}
+                    error={error}
                     text={value}
 
                   />

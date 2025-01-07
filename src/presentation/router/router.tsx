@@ -1,8 +1,11 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 // import { ImageTunningPage } from "../pages/image-tunning/ImageTunningPage";
 import {
-  // OrthographyPage,
-  ERPDataView
+  OrthographyPage,
+  ERPDataView,
+  ProsConsPage,
+  ProsConsStreamPage,
+  TranslatePage
 } from "../pages";
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { ERPDataViewUser } from "../pages/erp-data-view-user/ERPDataViewUser";
@@ -10,34 +13,34 @@ import { ERPDataViewUser } from "../pages/erp-data-view-user/ERPDataViewUser";
 
 
 export const menuRoutes = [
-  // {
-  //   to: "/orthography",
-  //   icon: "fa-solid fa-spell-check",
-  //   title: "Ortografía",
-  //   description: "Corregir ortografía",
-  //   component: <OrthographyPage />
-  // },
-  // {
-  //   to: "/pros-cons",
-  //   icon: "fa-solid fa-code-compare",
-  //   title: "Pros & Cons",
-  //   description: "Comparar pros y contras",
-  //   component: <ProsConsPage />
-  // },
-  // {
-  //   to: "/pros-cons-stream",
-  //   icon: "fa-solid fa-water",
-  //   title: "Como stream",
-  //   description: "Con stream de mensajes",
-  //   component: <ProsConsStreamPage />
-  // },
-  // {
-  //   to: "/translate",
-  //   icon: "fa-solid fa-language",
-  //   title: "Traducir",
-  //   description: "Textos a otros idiomas",
-  //   component: <TranslatePage />
-  // },
+  {
+    to: "/orthography",
+    icon: "fa-solid fa-spell-check",
+    title: "Ortografía",
+    description: "Corregir ortografía",
+    component: <OrthographyPage />
+  },
+  {
+    to: "/pros-cons",
+    icon: "fa-solid fa-code-compare",
+    title: "Pros & Cons",
+    description: "Comparar pros y contras",
+    component: <ProsConsPage />
+  },
+  {
+    to: "/pros-cons-stream",
+    icon: "fa-solid fa-water",
+    title: "Como stream",
+    description: "Con stream de mensajes",
+    component: <ProsConsStreamPage />
+  },
+  {
+    to: "/translate",
+    icon: "fa-solid fa-language",
+    title: "Traducir",
+    description: "Textos a otros idiomas",
+    component: <TranslatePage />
+  },
   // {
   //   to: "/text-to-audio",
   //   icon: "fa-solid fa-podcast",

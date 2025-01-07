@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import {
   GptMessage,
@@ -8,8 +8,7 @@ import {
 } from '../../components'
 
 import { ERPDataViewUseCase } from '../../../core/use-cases/ERPDataView.use-case'
-
-
+import { useScrollBottom } from '../../hooks/useScrollBottom';
 
 
 interface Message {
@@ -30,16 +29,14 @@ interface Message {
 export const ERPDataView = () => {
 
   const [loading, setLoading] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
-  const bottomRef = useRef<HTMLDivElement | null>(null); // 
+  const bottomRef = useScrollBottom()
+  const [messages, setMessages] = useState<Message[]>(localStorage.getItem('chat_user_admin') !== null ? JSON.parse(localStorage.getItem('chat_user_admin') ?? '') : [])
 
 
 
   useEffect(() => {
-    // Desplazarse al último mensaje cuando cambia la lista de mensajes
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+
+    localStorage.setItem('chat_user_admin', JSON.stringify(messages))
   }, [messages]);
 
 
@@ -47,10 +44,10 @@ export const ERPDataView = () => {
 
   const handleOnsendMessage = async (message: string) => {
 
-    const id = uuidv4();
+
 
     setLoading(true)
-    setMessages([...messages, { value: message, id, isGpt: false }])
+    setMessages([...messages, { value: message, id: uuidv4(), isGpt: false }])
 
     try {
 
@@ -63,7 +60,7 @@ export const ERPDataView = () => {
           [...prev,
           {
             value: 'Hubo un error al procesar tu respuesta',
-            id,
+            id: uuidv4(),
             isGpt: true
           }]
         )
@@ -74,19 +71,19 @@ export const ERPDataView = () => {
 
 
       setMessages(
-        prev => 
+        prev =>
           [
-            ...prev, 
-            { 
-              value: data.query, 
-              id, 
-              isGpt: true, 
-              query: data.query, 
-              queryResults: data.queryResults, 
-              error: data.error 
+            ...prev,
+            {
+              value: data.query,
+              id: uuidv4(),
+              isGpt: true,
+              query: data.query,
+              queryResults: data.queryResults,
+              error: data.error
             }
           ]
-        )
+      )
 
 
 
@@ -119,14 +116,14 @@ export const ERPDataView = () => {
 
           {
             (messages && messages.length) > 0 &&
-            messages.map(({ value, id, isGpt, query, queryResults, error, originaPrompt }) => (
+            messages.map(({ value, id, isGpt, query, error, originaPrompt }) => (
               isGpt
                 ? (
                   <GptMessage
                     key={id}
                     sql={query}
                     originalPropmt={originaPrompt}
-                    sqlResults={queryResults}
+                    
                     error={error}
                     text={value}
 

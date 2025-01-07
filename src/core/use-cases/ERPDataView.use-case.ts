@@ -1,8 +1,10 @@
 import { ERPDataViewResponse } from "../../interfaces";
 
+interface ErpDataViewUseCase extends ERPDataViewResponse {
+  ok: boolean
+}
 
-
-export const ERPDataViewUseCase = async (prompt: string)=> {
+export const ERPDataViewUseCase = async (prompt: string): Promise<ErpDataViewUseCase> => {
   const URI = import.meta.env.VITE_GPT_API
 
   try {
@@ -29,12 +31,11 @@ export const ERPDataViewUseCase = async (prompt: string)=> {
     console.log(error)
     return {
       ok: false,
-      query:'Hubo un error al procesar ',
-      originalPropmt:'',
+      query: 'Hubo un error al procesar ',
       originaPrompt: undefined,
       error: 'Hubo un error al procesar ',
       queryResults: undefined
-      
+
     }
   }
 
